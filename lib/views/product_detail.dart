@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_shop/models/product.dart';
-
+import '../providers/counter_provider.dart';
 class ProductDetailPage extends StatelessWidget {
   final Product product;
 
@@ -12,7 +12,7 @@ class ProductDetailPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(product.title),
       ),
-      body: Center(child: Text('Olá mundo'),),
+     
     );
   }
 }

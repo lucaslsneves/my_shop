@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_shop/models/product.dart';
+import 'package:my_shop/providers/products.dart';
+import 'package:provider/provider.dart';
 
 import '../routes.dart';
 
@@ -14,6 +16,7 @@ class ProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final toogleFavorite = Provider.of<Products>(context).toogleFavorite;
     return InkWell(
           onTap: () => goToProductDetail(context),
           child: ClipRRect(
@@ -25,9 +28,9 @@ class ProductItem extends StatelessWidget {
           ),
           footer: GridTileBar(
             leading: IconButton(
-                icon: Icon(Icons.favorite_border),
+                icon: Icon(product.isFavorite ? Icons.favorite : Icons.favorite_border),
                 color: Theme.of(context).accentColor,
-                onPressed: () {}),
+                onPressed: () => toogleFavorite(product.id)),
             title: Text(
               product.title,
               textAlign: TextAlign.center,
