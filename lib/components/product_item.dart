@@ -6,19 +6,16 @@ import 'package:provider/provider.dart';
 import '../routes.dart';
 
 class ProductItem extends StatelessWidget {
-  final Product product;
-
-  const ProductItem({Key key, this.product}) : super(key: key);
-
-  goToProductDetail(BuildContext context){
+ 
+  goToProductDetail(BuildContext context,Product product){
     Navigator.of(context).pushNamed(Routes.PRODUCT_DETAIL,arguments: product);
   }
 
   @override
   Widget build(BuildContext context) {
-    final toogleFavorite = Provider.of<Products>(context).toogleFavorite;
+   final product = Provider.of<Product>(context);
     return InkWell(
-          onTap: () => goToProductDetail(context),
+          onTap: () => goToProductDetail(context,product),
           child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
             child: GridTile(
@@ -30,7 +27,7 @@ class ProductItem extends StatelessWidget {
             leading: IconButton(
                 icon: Icon(product.isFavorite ? Icons.favorite : Icons.favorite_border),
                 color: Theme.of(context).accentColor,
-                onPressed: () => toogleFavorite(product.id)),
+                onPressed: product.toogleFavorite),
             title: Text(
               product.title,
               textAlign: TextAlign.center,

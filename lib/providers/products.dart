@@ -7,11 +7,7 @@ class Products with ChangeNotifier {
 
   List<Product> get products => [..._products];
 
-  void toogleFavorite(String id){
-   Product product =_products.firstWhere((element) => element.id == id);
-   product.isFavorite = !product.isFavorite;
-   notifyListeners();
-  }
+
 
   void addProduct(Product product){
     _products.add(product);
