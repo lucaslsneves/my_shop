@@ -5,6 +5,7 @@ class Product with ChangeNotifier{
   final String title;
   final String description;
   final double price;
+  double quantity = 0;
   final String imageUrl;
   bool isFavorite = false;
 
