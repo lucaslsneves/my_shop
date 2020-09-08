@@ -30,7 +30,7 @@ class Routes {
       case PRODUCTS:
         return MaterialPageRoute(builder: (context) => ProductsPage());
       case PRODUCTS_FORM:
-        return MaterialPageRoute(builder: (context) => ProductFormPage());
+        return MaterialPageRoute(builder: (context) => ProductFormPage(product: args,));
       default:
         return MaterialPageRoute(builder: (context) => ProductsListPage());
     }

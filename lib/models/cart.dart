@@ -24,6 +24,16 @@ class Cart with ChangeNotifier {
     notifyListeners();
   }
 
+  clearCart(){
+    _items.forEach((element) {
+      element.quantity = 0;
+    });
+    print(_items[0].quantity);
+    _items = [];
+    _total = 0;
+    notifyListeners();
+  }
+
   removeFromCartSnack(Product product){
     if(product.quantity == 1){
         _items.remove(product);   

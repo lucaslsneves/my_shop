@@ -1,18 +1,18 @@
 import 'package:flutter/foundation.dart';
 
 class Product with ChangeNotifier{
-  final String id;
-  final String title;
-  final String description;
-  final double price;
+  String id;
+  String title;
+  String description;
+  double price;
   double quantity;
-  final String imageUrl;
+  String imageUrl;
   bool isFavorite = false;
 
   
 
   Product({
-    @required this.id,
+    this.id,
     @required this.title,
     @required this.description,
     @required this.price,

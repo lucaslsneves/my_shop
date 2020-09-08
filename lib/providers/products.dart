@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:my_shop/data/dummy_data.dart';
 import 'package:my_shop/models/product.dart';
@@ -19,17 +21,37 @@ class Products with ChangeNotifier {
 
   bool get showFavorite => _showFavorite;
 
-  setOnlyFavorites(bool value){
+ void setOnlyFavorites(bool value){
     _showFavorite = value;
     notifyListeners();
   }
 
+  
+
+  void updateProduct(Product product){
+    if(product == null && product.id == null){
+      return;
+    }
+   final index = _products.indexWhere((element) => element.id == product.id);
+   if(index >=0){
+     print('update');
+     _products[index] = product;
+     notifyListeners();
+   }
+  }
+
   void addProduct(Product product){
-    _products.add(product);
+    if(product.id == null){
+      print('oi');
+      product.id = Random().nextDouble().toString();
+       _products.add(product);
+    }
     notifyListeners();
   }
   void removeProduct(Product product){
     _products.remove(product);
     notifyListeners();
   }
+
+  
 }
