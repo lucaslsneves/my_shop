@@ -19,10 +19,11 @@ class _CartPageState extends State<CartPage> {
     final orders = Provider.of<Orders>(context);
     return Scaffold(
     appBar: AppBar(
+      
       title: Text('Cart'),
      
     ),
-    drawer: AppDrawer(),
+    
     body: LayoutBuilder(
       builder: (ctx, constrains) => Column(
         children: [

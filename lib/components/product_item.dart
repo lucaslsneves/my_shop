@@ -13,7 +13,7 @@ class ProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final product = Provider.of<Product>(context, listen: false);
+    final product = Provider.of<Product>(context,listen: false);
     final cart = Provider.of<Cart>(context);
     Products products = Provider.of<Products>(context);
     return InkWell(
@@ -32,10 +32,10 @@ class ProductItem extends StatelessWidget {
                       ? Icons.favorite
                       : Icons.favorite_border),
                   color: Theme.of(context).accentColor,
-                  onPressed:(){
+                  onPressed: () {
                     product.toogleFavorite();
                     products.setOnlyFavorites(products.showFavorite);
-                  } ),
+                  }),
             ),
             title: Text(
               product.title,
@@ -50,8 +50,23 @@ class ProductItem extends StatelessWidget {
                     color: Theme.of(context).accentColor,
                     onPressed: () {
                       cart.addToCart(product);
+                      Scaffold.of(context).hideCurrentSnackBar();
+                      Scaffold.of(context).showSnackBar(SnackBar(
+                        backgroundColor: Theme.of(context).primaryColor,
+                        content: Text(
+                          'Produto adicionada ao carrinho',
+                          style: TextStyle(fontSize: 16),
+                          
+                        ),
+                        action: SnackBarAction(label: 'Desfazer',onPressed: () {
+                          return cart.removeFromCartSnack(product);
+                        },textColor: Theme.of(context).accentColor,),
+                      ));
                     }),
-                Text('${product.quantity.toStringAsFixed(0)}',style: TextStyle(color:Colors.white),)
+                Text(
+                  '${product.quantity.toStringAsFixed(0)}',
+                  style: TextStyle(color: Colors.white),
+                )
               ],
             ),
           ),

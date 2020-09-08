@@ -2,43 +2,52 @@ import 'package:flutter/foundation.dart';
 import 'package:my_shop/models/product.dart';
 
 class Cart with ChangeNotifier {
-  List<Product> items = [];
+  List<Product> _items = [];
 
-  int get getCartAmout => items.length;
+  int get getCartAmout => _items.length;
+
+  List<Product> get items => [..._items];
 
   double _total = 0;
 
-  double get total => _total; 
+  double get total => _total;
   String get totalFormatted => 'R\$ ${_total.toStringAsFixed(2)}';
 
-  addToCart(Product product){
-    
-    if(product.quantity == 0){
-      items.add(product);
+  addToCart(Product product) {
+    if (product.quantity == 0) {
+      _items.add(product);
       product.quantity++;
-      _total+= product.price;
-    }else {
+    } else {
       product.quantity++;
-      _total+= product.price;
     }
+    _total += product.price;
     notifyListeners();
   }
 
-  removeFromCart(Product product){
+  removeFromCartSnack(Product product){
     if(product.quantity == 1){
+        _items.remove(product);   
+        product.quantity = 0;
+    }else {
+      product.quantity--;
+    }
+     _total -= product.price;
+     notifyListeners();
+  }
+
+  removeFromCart(Product product) {
+    if (product.quantity == 1) {
       return;
     }
     product.quantity--;
-    _total-= product.price;
-    notifyListeners();
+    _total -= product.price;
+    
   }
 
-  removeAllFromCart(Product product){
-    items.remove(product);
+  removeAllFromCart(Product product) {
+    _items.remove(product);
     _total -= product.price * product.quantity;
     product.quantity = 0;
     notifyListeners();
   }
-  
-  
 }

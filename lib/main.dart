@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => Orders()
-        )
+        ),
       ],
       child: MaterialApp(
         title: 'Minha Loja',

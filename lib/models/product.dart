@@ -5,9 +5,11 @@ class Product with ChangeNotifier{
   final String title;
   final String description;
   final double price;
-  double quantity = 0;
+  double quantity;
   final String imageUrl;
   bool isFavorite = false;
+
+  
 
   Product({
     @required this.id,
@@ -15,6 +17,7 @@ class Product with ChangeNotifier{
     @required this.description,
     @required this.price,
     @required this.imageUrl,
+    this.quantity = 0,
     this.isFavorite = false,
   });
 

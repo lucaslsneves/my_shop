@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_shop/components/app_drawer.dart';
+import 'package:my_shop/components/order_item.dart';
 import 'package:my_shop/models/order.dart';
 import 'package:provider/provider.dart';
 
@@ -14,7 +15,7 @@ class OrdersPage extends StatelessWidget {
               builder: (ctx,constrains) => Container(
                 height: constrains.maxHeight,
                 child: ListView.builder(itemCount: orders.orders.length,itemBuilder: (ctx,i) {
-          return ListTile(title: Text(orders.orders[i].id),);
+          return OrderItem(orders.orders[i]);
         }),
               ),
       )

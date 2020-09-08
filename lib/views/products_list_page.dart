@@ -3,6 +3,7 @@ import 'package:my_shop/components/app_drawer.dart';
 import 'package:my_shop/components/badge.dart';
 import 'package:my_shop/components/product_grid.dart';
 import 'package:my_shop/models/cart.dart';
+import 'package:my_shop/models/order.dart';
 import 'package:my_shop/providers/products.dart';
 import 'package:provider/provider.dart';
 
@@ -29,6 +30,7 @@ class ProductsListPage extends StatelessWidget {
             ),
           ),
           PopupMenuButton(
+          
             onSelected: (bool value) {
               products.setOnlyFavorites(value);
             },

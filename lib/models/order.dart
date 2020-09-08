@@ -4,7 +4,7 @@ import 'package:my_shop/models/product.dart';
 class Order {
   final String id;
   final double amount;
-  final List<Product> items;
+  List<Product> items;
   final DateTime date;
 
   Order({
@@ -22,6 +22,15 @@ class Orders with ChangeNotifier {
   List<Order> get orders => [..._orders];
 
   addOrder(Order order){
+    order.items = order.items.map((item) => Product(
+      id: item.id,
+      description: item.description,
+      imageUrl: item.imageUrl,
+      price: item.price,
+      title: item.title,
+      quantity: item.quantity,
+      isFavorite: item.isFavorite
+    )).toList();
     _orders.add(order);
     notifyListeners();
   }

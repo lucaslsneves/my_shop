@@ -6,6 +6,8 @@ class Products with ChangeNotifier {
   List<Product> _products  = DUMMY_PRODUCTS;
 
    bool _showFavorite = false;
+   
+   int get getLenght => _products.length;
 
   List<Product> get products{
     if(_showFavorite){
