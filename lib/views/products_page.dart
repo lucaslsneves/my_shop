@@ -23,16 +23,19 @@ class ProductsPage extends StatelessWidget {
             )
           ],
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(10),
-          child: ListView.builder(itemCount: products.getLenght,itemBuilder: (_, i) {
-            return Column(
-              children: [
-                ProductEditItem(product:products.products[i]),
-                Divider(),
-              ],
-            );
-          }),
+        body: RefreshIndicator(
+            onRefresh: () => products.loadProducts() ,
+                  child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: ListView.builder(itemCount: products.getLenght,itemBuilder: (_, i) {
+              return Column(
+                children: [
+                  ProductEditItem(product:products.products[i]),
+                  Divider(),
+                ],
+              );
+            }),
+          ),
         ));
   }
 }

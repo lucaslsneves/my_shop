@@ -7,7 +7,26 @@ import 'package:my_shop/models/order.dart';
 import 'package:my_shop/providers/products.dart';
 import 'package:provider/provider.dart';
 
-class ProductsListPage extends StatelessWidget {
+class ProductsListPage extends StatefulWidget {
+  @override
+  _ProductsListPageState createState() => _ProductsListPageState();
+}
+
+class _ProductsListPageState extends State<ProductsListPage> {
+  bool _isLoading = true;
+  
+  @override
+  void initState()  {
+    
+    Products products = Provider.of<Products>(context, listen: false);
+    products.loadProducts().then((value) {
+      setState(() {
+        _isLoading = false;
+      });
+    });
+    super.initState();
+    
+  }
   @override
   Widget build(BuildContext context) {
     Products products = Provider.of<Products>(context, listen: false);
@@ -47,7 +66,7 @@ class ProductsListPage extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: ProductGrid(),
+        child: _isLoading == false ? ProductGrid() : Center(child: CircularProgressIndicator(),),
       ),
     );
   }
