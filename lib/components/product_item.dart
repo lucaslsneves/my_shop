@@ -15,7 +15,6 @@ class ProductItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final product = Provider.of<Product>(context,listen: false);
     final cart = Provider.of<Cart>(context);
-    Products products = Provider.of<Products>(context);
     return InkWell(
       onTap: () => goToProductDetail(context, product),
       child: ClipRRect(
@@ -32,9 +31,12 @@ class ProductItem extends StatelessWidget {
                       ? Icons.favorite
                       : Icons.favorite_border),
                   color: Theme.of(context).accentColor,
-                  onPressed: () {
-                    product.toogleFavorite();
-                    products.setOnlyFavorites(products.showFavorite);
+                  onPressed: () async {
+                    try {
+                     await product.toogleFavorite();
+                    }catch(e){
+                      Scaffold.of(context).showSnackBar(SnackBar(content: Text('Erro ao favoritar'),));
+                    } 
                   }),
             ),
             title: Text(

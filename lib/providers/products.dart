@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:my_shop/models/product.dart';
 
 class Products with ChangeNotifier {
-  final _url = 'https://my-shop-30659.firebaseio.com/products.json';
+  final _baseUrl = 'https://my-shop-30659.firebaseio.com/products';
   List<Product> _products = [];
 
   bool _showFavorite = false;
@@ -27,20 +27,26 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
-  void updateProduct(Product product) {
+  Future<void> updateProduct(Product product) async {
     if (product == null && product.id == null) {
       return;
     }
     final index = _products.indexWhere((element) => element.id == product.id);
     if (index >= 0) {
-      print('update');
+      await http.patch("$_baseUrl/${product.id}.json",
+          body: json.encode({
+            'imageUrl': product.imageUrl,
+            'title': product.title,
+            'price': product.price,
+            'description': product.description
+          }));
       _products[index] = product;
       notifyListeners();
     }
   }
 
   Future<void> loadProducts() async {
-    final response = await http.get(_url);
+    final response = await http.get("$_baseUrl.json");
 
     final data = json.decode(response.body);
     if (data != null) {
@@ -61,7 +67,7 @@ class Products with ChangeNotifier {
 
   Future<bool> addProduct(Product product) async {
     return http
-        .post(_url,
+        .post("$_baseUrl.json",
             body: json.encode({
               'title': product.title,
               'description': product.description,
@@ -80,8 +86,25 @@ class Products with ChangeNotifier {
     }).catchError((error) => false);
   }
 
-  void removeProduct(Product product) {
-    _products.remove(product);
-    notifyListeners();
+  Future<void> removeProduct(String id) async {
+    final index = _products.indexWhere((element) => element.id == id);
+    if(index >=0){
+      final product = _products[index];
+       _products.remove(product);
+         notifyListeners();
+
+
+    final response = await http.delete("$_baseUrl/${product.id}");
+
+    
+    if(response.statusCode >= 400){
+      print(response.statusCode);
+      _products.insert(index, product);
+      notifyListeners();
+     throw Error;
+    }
+   
+    }
+    
   }
 }

@@ -1,71 +1,77 @@
 import 'package:flutter/material.dart';
 import 'package:my_shop/models/cart.dart';
-import 'package:my_shop/models/product.dart';
-import 'package:my_shop/providers/products.dart';
 import 'package:provider/provider.dart';
 
+
+import '../models/product.dart';
+import '../providers/products.dart';
 import '../routes.dart';
+
 
 class ProductEditItem extends StatelessWidget {
   final Product product;
 
-  const ProductEditItem({this.product});
+  ProductEditItem({this.product});
 
   @override
   Widget build(BuildContext context) {
+    final scaffold = Scaffold.of(context);
     return ListTile(
       leading: CircleAvatar(
         backgroundImage: NetworkImage(product.imageUrl),
-        backgroundColor: Colors.transparent,
       ),
       title: Text(product.title),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          IconButton(
-              icon: Icon(
-                Icons.edit,
-                color: Theme.of(context).primaryColor,
-              ),
+      trailing: Container(
+        width: 100,
+        child: Row(
+          children: <Widget>[
+            IconButton(
+              icon: Icon(Icons.edit),
+              color: Theme.of(context).primaryColor,
               onPressed: () {
-                Navigator.pushNamed(context, Routes.PRODUCTS_FORM,
-                    arguments: product);
-              }),
-          IconButton(
-              icon: Icon(
-                Icons.delete,
-                color: Theme.of(context).errorColor,
-              ),
-              onPressed: () async {
+                Navigator.of(context)
+                    .pushNamed(Routes.PRODUCTS_FORM, arguments: product);
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.delete),
+              color: Theme.of(context).errorColor,
+              onPressed: () {
                 showDialog(
-                    context: context,
-                    builder: (ctx) => AlertDialog(
-                      
-                          actions: [
-                            FlatButton(
-                              child: Text('Sim',style: TextStyle(color: Colors.white)),
-                              onPressed: () {
-                                Provider.of<Products>(context, listen: false)
-                                    .removeProduct(product);
-                                Provider.of<Cart>(context, listen: false)
-                                    .removeAllFromCart(product);
-                                  Navigator.of(context).pop();
-                              },
-                            ),
-                            FlatButton(
-                              child: Text('Não',style: TextStyle(color: Colors.white),),
-                              onPressed: () {
-                                 Navigator.of(context).pop();
-                              },
-                            )
-                          ],
-                          backgroundColor: Theme.of(context).primaryColor,
-                          title: Text(
-                              'Você tem certeza que quer remover o produto?',style: TextStyle(color: Colors.white),),
-                          content: Text('O produto será removido para sempre',style: TextStyle(color: Colors.white)),
-                        ));
-              }),
-        ],
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: Text('Excluir Produto'),
+                    content: Text('Tem certeza?'),
+                    actions: <Widget>[
+                      FlatButton(
+                        child: Text('Não'),
+                        onPressed: () => Navigator.of(context).pop(false),
+                      ),
+                      FlatButton(
+                        child: Text('Sim'),
+                        onPressed: () => Navigator.of(context).pop(true),
+                      ),
+                    ],
+                  ),
+                ).then((value) async {
+                  if (value) {
+                    try {
+                      await Provider.of<Products>(context, listen: false)
+                          .removeProduct(product.id);
+                       Provider.of<Cart>(context,listen: false).removeAllFromCart(product);
+                    }  catch (error) {
+                      scaffold.showSnackBar(
+                        SnackBar(
+                          content: Text(error.toString()),
+                        ),
+                      );
+                    }
+                  }
+                });
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

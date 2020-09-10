@@ -24,6 +24,7 @@ class ProductsPage extends StatelessWidget {
           ],
         ),
         body: RefreshIndicator(
+          
             onRefresh: () => products.loadProducts() ,
                   child: Padding(
             padding: const EdgeInsets.all(10),

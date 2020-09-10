@@ -4,7 +4,7 @@ import 'package:my_shop/models/product.dart';
 class Cart with ChangeNotifier {
   List<Product> _items = [];
 
-  int get getCartAmout => _items.length;
+  int get getCartLength => _items.length;
 
   List<Product> get items => [..._items];
 

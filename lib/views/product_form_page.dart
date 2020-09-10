@@ -60,9 +60,12 @@ class _ProductFormPageState extends State<ProductFormPage> {
   void _saveForm() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-
+    
+setState((){
+  _isLoading = true;
+});
       if (widget.product == null) {
-        _isLoading = true;
+       
         final product = Product(
             description: _formData['description'],
             imageUrl: _formData['url'],
@@ -84,7 +87,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
                     ],
                   ));
         }
-        _isLoading = false;
+       
       } else {
         final product = Product(
             id: widget.product.id,
@@ -92,10 +95,12 @@ class _ProductFormPageState extends State<ProductFormPage> {
             imageUrl: _formData['url'],
             price: double.tryParse(_formData['price']),
             title: _formData['title']);
-        Provider.of<Products>(context, listen: false).updateProduct(product);
-      }
+       await Provider.of<Products>(context, listen: false).updateProduct(product);
 
-      Navigator.of(context).pop();
+     
+      }  
+  _isLoading = false;
+  Navigator.of(context).pop();
     }
   }
 

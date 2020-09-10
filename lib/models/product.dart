@@ -1,6 +1,10 @@
-import 'package:flutter/foundation.dart';
+import 'dart:convert';
 
-class Product with ChangeNotifier{
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+
+class Product with ChangeNotifier {
+  final _baseUrl = 'https://my-shop-30659.firebaseio.com/products';
   String id;
   String title;
   String description;
@@ -8,8 +12,6 @@ class Product with ChangeNotifier{
   double quantity;
   String imageUrl;
   bool isFavorite = false;
-
-  
 
   Product({
     this.id,
@@ -21,8 +23,42 @@ class Product with ChangeNotifier{
     this.isFavorite = false,
   });
 
-  toogleFavorite(){
+  factory Product.fromJson(Map<String,dynamic> json){
+    return Product(
+      id: json['id'],
+      description:  json['description'],
+      imageUrl: json['imageUrl'],
+      price: json['price'],
+      title: json['title'],
+      quantity: json['quantity']
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> json = {};
+    json['id'] = this.id;
+    json['title'] = this.title;
+    json['description'] = this.description;
+    json['price'] = this.price;
+    json['imageUrl'] = this.imageUrl;
+    json['quantity'] = this.quantity;
+    return json;
+  }
+
+  toogleFavorite() async {
     isFavorite = !isFavorite;
     notifyListeners();
+    try {
+      final response = await http.patch("$_baseUrl/$id.json",
+          body: json.encode({'isFavorite': isFavorite}));
+      
+      if (response.statusCode >= 400) {
+        throw Error;
+      }
+    } catch (e) {
+      isFavorite = !isFavorite;
+      notifyListeners();
+      throw Error;
+    }
   }
 }

@@ -45,7 +45,7 @@ class _ProductsListPageState extends State<ProductsListPage> {
               ) ,
             builder: (ctx, cart, child) => Badge(
               child: child,
-              value: '${cart.getCartAmout.toStringAsFixed(0)}',
+              value: '${cart.getCartLength.toStringAsFixed(0)}',
             ),
           ),
           PopupMenuButton(
