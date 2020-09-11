@@ -31,9 +31,9 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.purple,
             accentColor: Colors.deepOrange,
             fontFamily: 'Lato'),
-        home: ProductsListPage(),
+       
         onGenerateRoute: Routes.onGenerateRoute,
-        initialRoute: Routes.HOME,
+        initialRoute: Routes.AUTH,
       ),
     );
   }

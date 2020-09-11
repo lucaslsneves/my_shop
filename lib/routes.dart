@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:my_shop/views/auth_page.dart';
 import 'package:my_shop/views/cart_page.dart';
 import 'package:my_shop/views/orders_page.dart';
 import 'package:my_shop/views/product_detail.dart';
@@ -8,7 +9,8 @@ import 'package:my_shop/views/products_list_page.dart';
 import 'package:my_shop/views/products_page.dart';
 
 class Routes {
-  static const String HOME = '/';
+  static const String AUTH = '/';
+  static const String HOME = '/home';
   static const String PRODUCTS = '/products';
   static const String PRODUCTS_FORM = '/products_form';
   static const String PRODUCT_DETAIL = '/product_detail';
@@ -18,6 +20,8 @@ class Routes {
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     final args = settings.arguments;
     switch (settings.name) {
+      case AUTH:
+        return MaterialPageRoute(builder: (context) => AuthPage());
       case HOME:
         return MaterialPageRoute(builder: (context) => ProductsListPage());
       case PRODUCT_DETAIL:
