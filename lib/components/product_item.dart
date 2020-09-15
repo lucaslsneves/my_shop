@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_shop/models/cart.dart';
 import 'package:my_shop/models/product.dart';
+import 'package:my_shop/providers/auth.dart';
 import 'package:my_shop/providers/products.dart';
 import 'package:provider/provider.dart';
 
@@ -15,6 +16,7 @@ class ProductItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final product = Provider.of<Product>(context,listen: false);
     final cart = Provider.of<Cart>(context);
+    final auth = Provider.of<Auth>(context);
     return InkWell(
       onTap: () => goToProductDetail(context, product),
       child: ClipRRect(
@@ -33,7 +35,7 @@ class ProductItem extends StatelessWidget {
                   color: Theme.of(context).accentColor,
                   onPressed: () async {
                     try {
-                     await product.toogleFavorite();
+                     await product.toogleFavorite(auth.token,auth.userId);
                     }catch(e){
                       Scaffold.of(context).showSnackBar(SnackBar(content: Text('Erro ao favoritar'),));
                     } 

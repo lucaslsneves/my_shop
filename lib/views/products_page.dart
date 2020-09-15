@@ -7,10 +7,12 @@ import 'package:provider/provider.dart';
 import '../routes.dart';
 
 class ProductsPage extends StatelessWidget {
+  GlobalKey _scaffold = GlobalKey();
   @override
   Widget build(BuildContext context) {
     final products = Provider.of<Products>(context);
     return Scaffold(
+      key: _scaffold,
         drawer: AppDrawer(),
         appBar: AppBar(
           title: Text('Produtos'),
@@ -31,7 +33,7 @@ class ProductsPage extends StatelessWidget {
             child: ListView.builder(itemCount: products.getLenght,itemBuilder: (_, i) {
               return Column(
                 children: [
-                  ProductEditItem(product:products.products[i]),
+                  ProductEditItem(product:products.products[i],scaffoldkey: _scaffold),
                   Divider(),
                 ],
               );

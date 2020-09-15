@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:my_shop/providers/auth.dart';
+import 'package:provider/provider.dart';
+
+import '../routes.dart';
 
 class AuthPage extends StatefulWidget {
   @override
@@ -8,12 +12,11 @@ class AuthPage extends StatefulWidget {
 class _AuthPageState extends State<AuthPage> {
   final _formSignIn = GlobalKey<FormState>();
   final _formSignUp = GlobalKey<FormState>();
-  final TextEditingController _signUpPasswordController = TextEditingController();
+  final TextEditingController _signUpPasswordController =
+      TextEditingController();
   final Map<String, String> _formData = {};
   bool _isSignInForm = true;
   bool _isLoading = false;
-
-
 
   Widget _getFormSignIn() {
     return Padding(
@@ -68,27 +71,40 @@ class _AuthPageState extends State<AuthPage> {
           SizedBox(
             height: 10,
           ),
-         _isLoading ? Container(height: 20,width: 20,child: CircularProgressIndicator()) :  RaisedButton(
-             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-            color: Colors.purple,
-            child: Container(
-                alignment: Alignment.center,
-                width: double.infinity,
-                child: Text(
-                  'ENTRAR',
-                  style: TextStyle(color: Colors.white),
-                )),
-            onPressed: () {
-             
-              if (_formSignIn.currentState.validate()) {
-                _formSignIn.currentState.save();
-                 setState(() {
-                _isLoading = true;
-              });
-              
-              }
-            },
-          ),
+          _isLoading
+              ? Container(
+                  height: 20, width: 20, child: CircularProgressIndicator())
+              : RaisedButton(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5)),
+                  color: Colors.purple,
+                  child: Container(
+                      alignment: Alignment.center,
+                      width: double.infinity,
+                      child: Text(
+                        'ENTRAR',
+                        style: TextStyle(color: Colors.white),
+                      )),
+                  onPressed: () async {
+                    if (_formSignIn.currentState.validate()) {
+                      _formSignIn.currentState.save();
+                      setState(() {
+                        _isLoading = true;
+                      });
+                      final String resp = await Provider.of<Auth>(context,listen: false)
+                          .signIn(_formData['email'], _formData['password']);
+                      if (resp == null) {
+                        _isLoading = false;
+                        Navigator.of(context).pushNamed(Routes.HOME);
+                      } else {
+                        showDialog(context: context,builder: (ctx) => AlertDialog(title: Text('Ocorreu um erro'),content: Text(resp),actions: [FlatButton(child: Text('Ok'),onPressed: Navigator.of(context).pop,)],));
+                        setState(() {
+                          _isLoading = false;
+                        });
+                      }
+                    }
+                  },
+                ),
           SizedBox(
             height: 10,
           ),
@@ -98,11 +114,13 @@ class _AuthPageState extends State<AuthPage> {
               style:
                   TextStyle(fontWeight: FontWeight.bold, color: Colors.purple),
             ),
-            onPressed: _isLoading ? null : () {
-              setState(() {
-                _isSignInForm = false;
-              });
-            },
+            onPressed: _isLoading
+                ? null
+                : () {
+                    setState(() {
+                      _isSignInForm = false;
+                    });
+                  },
           )
         ],
       ),
@@ -142,7 +160,7 @@ class _AuthPageState extends State<AuthPage> {
                   height: 10,
                 ),
                 TextFormField(
-                  controller: _signUpPasswordController,
+                    controller: _signUpPasswordController,
                     validator: (String password) {
                       if (password.isEmpty) {
                         return 'Campo obrigatório';
@@ -160,12 +178,12 @@ class _AuthPageState extends State<AuthPage> {
                 SizedBox(
                   height: 10,
                 ),
-                  TextFormField(
+                TextFormField(
                     validator: (String confirmPassword) {
                       if (confirmPassword.isEmpty) {
                         return 'Campo obrigatório';
                       }
-                      if(confirmPassword != _signUpPasswordController.text){
+                      if (confirmPassword != _signUpPasswordController.text) {
                         return 'As senhas não batem';
                       }
                       return null;
@@ -181,26 +199,39 @@ class _AuthPageState extends State<AuthPage> {
           SizedBox(
             height: 10,
           ),
-         _isLoading ? Container(height: 20,width: 20,child: CircularProgressIndicator()) :    RaisedButton(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-            color: Colors.purple,
-            child: Container(
-                alignment: Alignment.center,
-                width: double.infinity,
-                child: Text(
-                  'CADASTRAR',
-                  style: TextStyle(color: Colors.white),
-                )),
-           onPressed:() {
-             
-              if (_formSignUp.currentState.validate()) {
-                _formSignUp.currentState.save();
-                 setState(() {
-                _isLoading = true;
-              });
-              
-            }
-           }),
+          _isLoading
+              ? Container(
+                  height: 20, width: 20, child: CircularProgressIndicator())
+              : RaisedButton(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5)),
+                  color: Colors.purple,
+                  child: Container(
+                      alignment: Alignment.center,
+                      width: double.infinity,
+                      child: Text(
+                        'CADASTRAR',
+                        style: TextStyle(color: Colors.white),
+                      )),
+                  onPressed: () async {
+                    if (_formSignUp.currentState.validate()) {
+                      _formSignUp.currentState.save();
+                      setState(() {
+                        _isLoading = true;
+                      });
+                      final bool resp = await Provider.of<Auth>(context,listen: false)
+                          .signUp(_formData['email'], _formData['password']);
+                        
+                      if (resp) {
+                        _isLoading = false;
+                        Navigator.of(context).pushNamed(Routes.HOME);
+                      } else {
+                        setState(() {
+                          _isLoading = false;
+                        });
+                      }
+                    }
+                  }),
           SizedBox(
             height: 10,
           ),
@@ -210,11 +241,13 @@ class _AuthPageState extends State<AuthPage> {
               style:
                   TextStyle(fontWeight: FontWeight.bold, color: Colors.purple),
             ),
-            onPressed: _isLoading ? null : () {
-              setState(() {
-                _isSignInForm = true;
-              });
-            },
+            onPressed: _isLoading
+                ? null
+                : () {
+                    setState(() {
+                      _isSignInForm = true;
+                    });
+                  },
           )
         ],
       ),

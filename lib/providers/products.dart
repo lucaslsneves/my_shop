@@ -7,7 +7,10 @@ import 'package:my_shop/models/product.dart';
 class Products with ChangeNotifier {
   final _baseUrl = 'https://my-shop-30659.firebaseio.com/products';
   List<Product> _products = [];
+  String _token;
+  String _userId;
 
+  Products(this._products, this._userId, this._token);
   bool _showFavorite = false;
 
   int get getLenght => _products.length;
@@ -27,47 +30,68 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateProduct(Product product) async {
+  Future<bool> updateProduct(Product product) async {
     if (product == null && product.id == null) {
-      return;
+      return false;
     }
     final index = _products.indexWhere((element) => element.id == product.id);
     if (index >= 0) {
-      await http.patch("$_baseUrl/${product.id}.json",
-          body: json.encode({
-            'imageUrl': product.imageUrl,
-            'title': product.title,
-            'price': product.price,
-            'description': product.description
-          }));
-      _products[index] = product;
-      notifyListeners();
+      try {
+        final response =
+            await http.patch("$_baseUrl/${product.id}.json?auth=$_token",
+                body: json.encode({
+                  'imageUrl': product.imageUrl,
+                  'title': product.title,
+                  'price': product.price,
+                  'description': product.description
+                }));
+
+        if (response.statusCode >= 400) {
+          return false;
+        }
+        _products[index] = product;
+        notifyListeners();
+        return true;
+      } catch (e) {
+        return false;
+      }
     }
+    return false;
   }
 
   Future<void> loadProducts() async {
-    final response = await http.get("$_baseUrl.json");
+    try {
+      final response = await http.get("$_baseUrl.json?auth=$_token");
+      final favResponse = await http.get(
+          "https://my-shop-30659.firebaseio.com/userFavorites/$_userId.json?auth=$_token");
+      final data = json.decode(response.body);
+      final favMap = json.decode(favResponse.body);
+      
+      if (data != null) {
+        _products.clear();
+        data.forEach((id, product) {
+          bool isFav = favMap == null ? false : favMap[id] ?? false;
+          print(isFav);
+          _products.add(Product(
+              id: id,
+              imageUrl: product['imageUrl'],
+              title: product['title'],
+              price: product['price'],
+              description: product['description'],
+              isFavorite: isFav));
+        });
+        notifyListeners();
+      }
 
-    final data = json.decode(response.body);
-    if (data != null) {
-      _products.clear();
-      data.forEach((id, product) {
-        _products.add(Product(
-            id: id,
-            imageUrl: product['imageUrl'],
-            title: product['title'],
-            price: product['price'],
-            description: product['description']));
-      });
-      notifyListeners();
+      return Future.value();
+    } catch (e) {
+      throw Error();
     }
-
-    return Future.value();
   }
 
   Future<bool> addProduct(Product product) async {
     return http
-        .post("$_baseUrl.json",
+        .post("$_baseUrl.json?auth=$_token",
             body: json.encode({
               'title': product.title,
               'description': product.description,
@@ -77,6 +101,11 @@ class Products with ChangeNotifier {
             }))
         .then((response) {
       final body = json.decode(response.body);
+
+      if (body['error'] != null) {
+        throw Error;
+      }
+
       product.id = body['name'];
 
       _products.add(product);
@@ -88,23 +117,26 @@ class Products with ChangeNotifier {
 
   Future<void> removeProduct(String id) async {
     final index = _products.indexWhere((element) => element.id == id);
-    if(index >=0){
+    if (index >= 0) {
       final product = _products[index];
-       _products.remove(product);
-         notifyListeners();
-
-
-    final response = await http.delete("$_baseUrl/${product.id}");
-
-    
-    if(response.statusCode >= 400){
-      print(response.statusCode);
-      _products.insert(index, product);
+      _products.remove(product);
       notifyListeners();
-     throw Error;
+
+      try {
+        final response =
+            await http.delete("$_baseUrl/${product.id}.json?auth=$_token");
+
+        if (response.statusCode >= 400) {
+          throw ('Você não tem permissão para deletar um produto');
+        }
+      } catch (e) {
+        _products.insert(index, product);
+        notifyListeners();
+        if (e == 'Você não tem permissão para deletar um produto') {
+          throw ('Você não tem permissão para deletar um produto');
+        }
+        throw ('Verifique sua conexão com a internet');
+      }
     }
-   
-    }
-    
   }
 }

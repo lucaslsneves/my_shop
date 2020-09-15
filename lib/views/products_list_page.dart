@@ -3,7 +3,6 @@ import 'package:my_shop/components/app_drawer.dart';
 import 'package:my_shop/components/badge.dart';
 import 'package:my_shop/components/product_grid.dart';
 import 'package:my_shop/models/cart.dart';
-import 'package:my_shop/models/order.dart';
 import 'package:my_shop/providers/products.dart';
 import 'package:provider/provider.dart';
 
@@ -14,7 +13,7 @@ class ProductsListPage extends StatefulWidget {
 
 class _ProductsListPageState extends State<ProductsListPage> {
   bool _isLoading = true;
-  
+  bool _error = false;
   @override
   void initState()  {
     
@@ -22,6 +21,11 @@ class _ProductsListPageState extends State<ProductsListPage> {
     products.loadProducts().then((value) {
       setState(() {
         _isLoading = false;
+      });
+    }).catchError((e){
+      setState((){
+         _isLoading = false;
+        _error = true;
       });
     });
     super.initState();
@@ -64,7 +68,7 @@ class _ProductsListPageState extends State<ProductsListPage> {
           )
         ],
       ),
-      body: Padding(
+      body: _error ? Center(child: Text('Ocorreu um erro'),) : Padding(
         padding: const EdgeInsets.all(8.0),
         child: _isLoading == false ? ProductGrid() : Center(child: CircularProgressIndicator(),),
       ),

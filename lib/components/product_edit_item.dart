@@ -10,8 +10,9 @@ import '../routes.dart';
 
 class ProductEditItem extends StatelessWidget {
   final Product product;
+  final GlobalKey scaffoldkey;
 
-  ProductEditItem({this.product});
+  ProductEditItem({this.product,this.scaffoldkey});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +39,7 @@ class ProductEditItem extends StatelessWidget {
               color: Theme.of(context).errorColor,
               onPressed: () {
                 showDialog(
-                  context: context,
+                  context:  scaffoldkey.currentContext,
                   builder: (ctx) => AlertDialog(
                     title: Text('Excluir Produto'),
                     content: Text('Tem certeza?'),
@@ -56,13 +57,13 @@ class ProductEditItem extends StatelessWidget {
                 ).then((value) async {
                   if (value) {
                     try {
-                      await Provider.of<Products>(context, listen: false)
+                      await Provider.of<Products>(scaffoldkey.currentContext, listen: false)
                           .removeProduct(product.id);
-                       Provider.of<Cart>(context,listen: false).removeAllFromCart(product);
+                       Provider.of<Cart>(scaffoldkey.currentContext,listen: false).removeAllFromCart(product);
                     }  catch (error) {
                       scaffold.showSnackBar(
                         SnackBar(
-                          content: Text(error.toString()),
+                          content: Text(error),
                         ),
                       );
                     }

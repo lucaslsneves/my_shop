@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class Product with ChangeNotifier {
-  final _baseUrl = 'https://my-shop-30659.firebaseio.com/products';
+  final _baseUrl = 'https://my-shop-30659.firebaseio.com';
   String id;
   String title;
   String description;
@@ -45,12 +45,12 @@ class Product with ChangeNotifier {
     return json;
   }
 
-  toogleFavorite() async {
+  toogleFavorite(String token,String userId) async {
     isFavorite = !isFavorite;
     notifyListeners();
     try {
-      final response = await http.patch("$_baseUrl/$id.json",
-          body: json.encode({'isFavorite': isFavorite}));
+      final response = await http.put("$_baseUrl/userFavorites/$userId/$id.json?auth=$token",
+          body: json.encode(isFavorite));
       
       if (response.statusCode >= 400) {
         throw Error;

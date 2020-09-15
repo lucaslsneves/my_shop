@@ -60,12 +60,11 @@ class _ProductFormPageState extends State<ProductFormPage> {
   void _saveForm() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-    
-setState((){
-  _isLoading = true;
-});
+
+      setState(() {
+        _isLoading = true;
+      });
       if (widget.product == null) {
-       
         final product = Product(
             description: _formData['description'],
             imageUrl: _formData['url'],
@@ -87,7 +86,6 @@ setState((){
                     ],
                   ));
         }
-       
       } else {
         final product = Product(
             id: widget.product.id,
@@ -95,12 +93,26 @@ setState((){
             imageUrl: _formData['url'],
             price: double.tryParse(_formData['price']),
             title: _formData['title']);
-       await Provider.of<Products>(context, listen: false).updateProduct(product);
+        bool resp = await Provider.of<Products>(context, listen: false)
+            .updateProduct(product);
 
-     
-      }  
-  _isLoading = false;
-  Navigator.of(context).pop();
+        if (!resp) {
+          await showDialog<Null>(
+              context: context,
+              builder: (ctx) => AlertDialog(
+                    title: Text('Ocorreu um erro'),
+                    content: Text('O produto não foi editado'),
+                    actions: [
+                      FlatButton(
+                        child: Text('ok'),
+                        onPressed: () => Navigator.of(context).pop(),
+                      )
+                    ],
+                  ));
+        }
+      }
+      _isLoading = false;
+      Navigator.of(context).pop();
     }
   }
 

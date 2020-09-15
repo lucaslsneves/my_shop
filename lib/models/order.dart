@@ -20,13 +20,18 @@ class Order {
 
 class Orders with ChangeNotifier {
   final _baseUrl = 'https://my-shop-30659.firebaseio.com/orders';
+  String _token;
+  String _userId;
+
   List<Order> _orders = [];
+
+  Orders(this._token,this._userId,this._orders );
 
   List<Order> get orders => [..._orders];
 
 Future<bool> loadOrders() async {
   try {
-    final response = await http.get("$_baseUrl.json");
+    final response = await http.get("$_baseUrl/$_userId.json?auth=$_token");
     final resp = json.decode(response.body) as Map;
     _orders.clear();
     if(resp != null) {
@@ -58,7 +63,7 @@ Future<bool> loadOrders() async {
     
 
     try {
-      final response = await http.post("$_baseUrl.json",body: json.encode({
+      final response = await http.post("$_baseUrl/$_userId.json?auth=$_token",body: json.encode({
         'amount' : order.amount,
         'date' : order.date.toIso8601String(),
         'items' : order.items.map((e) => e.toJson()).toList(),
